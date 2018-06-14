@@ -9,6 +9,9 @@
   "author": "Fajfara",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.3.2"
+    "axios": "^0.18.0",
+    "discord.js": "^11.3.2",
+    "express": "^4.16.3",
+    "fortnite": "^4.1.1"
   }
 }
