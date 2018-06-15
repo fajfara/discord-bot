@@ -2,22 +2,21 @@ const botSettings = require("./botsettings.json");
 const Discord = require("discord.js");
 const prefix = botSettings.prefix;
 const fortniteKey = botSettings.fortniteKey;
+const apiUser = botSettings.apiUser;
+const apiKey = botSettings.apiKey;
+const atTerminator = botSettings.atBot;
 const Fortnite = require("fortnite");
+const axios = require("axios");
 
 
 
 const ft = new Fortnite(fortniteKey);
 const bot = new Discord.Client();
 
-let config = {
-    headers: {
-        "TRN-Api-Key": "5301d4c9-d07f-40a4-a858-b8cd46cf33af"
-    }
-}
 
 bot.on("ready", async () => {
     console.log(`Bot is ready! ${ bot.user.username }`);
-    bot.user.setGame('with your mom.');
+    bot.user.setActivity('with your mom.');
 
     try {
         let link = await bot.generateInvite(["ADMINISTRATOR"]);
@@ -33,13 +32,39 @@ bot.on("message", async message => {
     if(message.author.bot) return;
     if(message.channel.type === 'dm') return;
 
+    
+    
     let messageArray = message.content.split(" ");
+
+    // saving the message into an array without  @Terminator(the name of the bot)
+    let cBotArray = messageArray.slice(1).join(" ");
+    console.log(cBotArray);
+
     let command = messageArray[0];
     let args = messageArray.slice(1);
     let fortniteUsername = messageArray[1];
     let fortnitePlatform = messageArray[2] || "pc";
 
+    console.log(command);
+    if(command === `${atTerminator}`){
+        message.channel.send("Let me think, boy!");
+        axios.post("https://cleverbot.io/1.0/ask", {
+            "user": "yLJd0pXTKtoHiQ8o",
+            "key": "2D8bpHcnLJV9YsHJKXSFm7FYPGiGnbo8",
+            "nick": "Terminator",
+            "text": cBotArray
+            },{
+            headers: {'Content-Type': 'application/json'}
+        }).then((res) => {
+            console.log(res.data.response);
+            message.channel.send(res.data.response);
+        }).catch((err) => {
+            message.channel.send("API failed: " + err);
+        });
+        return;
+    }
 
+    // Check for userinfo command
     if(command === `${prefix}userinfo`) {
         let embed = new Discord.RichEmbed()
             .setAuthor(message.author.username)
